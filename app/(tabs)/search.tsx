@@ -2,7 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function HomeScreen() {
+export default function SearchScreen() {
   const colorScheme = useColorScheme();
 
   return (
@@ -15,7 +15,7 @@ export default function HomeScreen() {
       <Text
         style={[styles.text, { color: Colors[colorScheme ?? "light"].text }]}
       >
-        🏠 Home
+        🔍 Search
       </Text>
     </View>
   );
