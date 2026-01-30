@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router"; // Import useRouter
 import React, { useState } from "react";
 import {
   Alert,
@@ -25,6 +26,7 @@ const LANGUAGES = [
 ];
 
 export default function LoginScreen() {
+  const router = useRouter(); // Initialize router
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
 
@@ -40,6 +42,8 @@ export default function LoginScreen() {
     }
     // Handle login logic here
     console.log("Logging in with:", { email, password });
+    // After successful login, navigate to home
+    // router.replace("/(tabs)/home");
   };
 
   const handleGoogleLogin = () => {
@@ -53,6 +57,10 @@ export default function LoginScreen() {
       "Forgot Password",
       "Password reset link will be sent to your email",
     );
+  };
+
+  const handleSignupPress = () => {
+    router.push("/signup");
   };
 
   return (
@@ -209,7 +217,7 @@ export default function LoginScreen() {
               onPress={handleGoogleLogin}
             >
               <Image
-                source={require("@/assets/Icons/google.png")} // You'll need to add this icon
+                source={require("@/assets/Icons/google.png")}
                 style={styles.googleIcon}
               />
               <Text style={[styles.googleButtonText, { color: theme.text }]}>
@@ -222,7 +230,11 @@ export default function LoginScreen() {
           <View style={styles.footerContainer}>
             <Text style={[styles.footerText, { color: theme.icon }]}>
               Don't have an account?{" "}
-              <Text style={[styles.link, { color: theme.tint }]}>Sign up</Text>
+              <TouchableOpacity onPress={handleSignupPress}>
+                <Text style={[styles.link, { color: theme.tint }]}>
+                  Sign up
+                </Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </View>
@@ -353,9 +365,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   buttonText: {
-    color: "#fff",
     fontSize: FontSize.button,
-    fontWeight: FontWeight.semiBold,
+    fontWeight: FontWeight.bold,
     lineHeight: LineHeight.button,
   },
   dividerContainer: {

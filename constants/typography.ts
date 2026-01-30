@@ -4,13 +4,14 @@ export const FontSize = {
   body: 14,
   button: 16,
   small: 12,
+  caption: 10,
 };
 
 export const FontWeight = {
-  regular: '400',
-  medium: '500',
-  semiBold: '600',
-  bold: '700',
+  regular: "400",
+  medium: "500",
+  semiBold: "600",
+  bold: "700",
 } as const;
 
 export const LineHeight = {

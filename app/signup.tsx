@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import { Colors } from "@/constants/theme";
 import { FontSize, FontWeight, LineHeight } from "@/constants/typography";
@@ -25,9 +26,10 @@ const LANGUAGES = [
 ];
 
 export default function SignupScreen() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
-
+  
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,21 +37,28 @@ export default function SignupScreen() {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignup = () => {
     // Validation
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+    if (!name.trim()) {
+      Alert.alert("Error", "Please enter your full name");
       return;
     }
 
-    if (!acceptTerms) {
-      Alert.alert("Error", "Please accept the terms and conditions");
+    if (!email.trim()) {
+      Alert.alert("Error", "Please enter your email");
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+    if (!email.includes("@") || !email.includes(".")) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
+    if (!password) {
+      Alert.alert("Error", "Please enter a password");
       return;
     }
 
@@ -58,14 +67,57 @@ export default function SignupScreen() {
       return;
     }
 
+    if (!confirmPassword) {
+      Alert.alert("Error", "Please confirm your password");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    if (!acceptTerms) {
+      Alert.alert("Error", "Please accept the terms and conditions");
+      return;
+    }
+
     // Handle signup logic here
     console.log("Signing up with:", { name, email, password });
-    Alert.alert("Success", "Account created successfully!");
+    
+    // Show success message
+    Alert.alert(
+      "Success!",
+      "Your account has been created successfully.",
+      [
+        {
+          text: "Continue",
+          onPress: () => {
+            // Navigate to home or verification screen
+            // router.replace("/(tabs)/home");
+            // For now, go back to login
+            router.push("/login");
+          }
+        }
+      ]
+    );
   };
 
   const handleGoogleSignup = () => {
     // Handle Google signup logic here
     console.log("Google signup pressed");
+  };
+
+  const handleLoginPress = () => {
+    router.push("/login");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -86,28 +138,17 @@ export default function SignupScreen() {
               onPress={() => setShowLanguageDropdown(!showLanguageDropdown)}
             >
               <Text style={[styles.languageText, { color: theme.text }]}>
-                {LANGUAGES.find((lang) => lang.value === selectedLanguage)
-                  ?.label || "English"}
+                {LANGUAGES.find(lang => lang.value === selectedLanguage)?.label || "English"}
               </Text>
-              <Text style={[styles.dropdownArrow, { color: theme.icon }]}>
-                ▼
-              </Text>
+              <Text style={[styles.dropdownArrow, { color: theme.icon }]}>▼</Text>
             </TouchableOpacity>
-
+            
             {showLanguageDropdown && (
-              <View
-                style={[
-                  styles.dropdown,
-                  { backgroundColor: theme.card, borderColor: theme.icon },
-                ]}
-              >
+              <View style={[styles.dropdown, { backgroundColor: theme.card, borderColor: theme.icon }]}>
                 {LANGUAGES.map((language) => (
                   <TouchableOpacity
                     key={language.value}
-                    style={[
-                      styles.dropdownItem,
-                      { borderBottomColor: theme.icon },
-                    ]}
+                    style={[styles.dropdownItem, { borderBottomColor: theme.icon }]}
                     onPress={() => {
                       setSelectedLanguage(language.value);
                       setShowLanguageDropdown(false);
@@ -137,7 +178,7 @@ export default function SignupScreen() {
               Create Account 🚀
             </Text>
             <Text style={[styles.subHeader, { color: theme.icon }]}>
-              Sign up to get started
+              Join our community today
             </Text>
           </View>
 
@@ -145,11 +186,9 @@ export default function SignupScreen() {
           <View style={styles.formContainer}>
             {/* Full Name */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Full Name
-              </Text>
+              <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
               <TextInput
-                placeholder="Enter your full name"
+                placeholder="John Doe"
                 placeholderTextColor={theme.icon + "80"}
                 style={[
                   styles.input,
@@ -162,14 +201,15 @@ export default function SignupScreen() {
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
+                autoCorrect={false}
               />
             </View>
 
             {/* Email */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Email</Text>
+              <Text style={[styles.label, { color: theme.text }]}>Email Address</Text>
               <TextInput
-                placeholder="Enter your email"
+                placeholder="john@example.com"
                 placeholderTextColor={theme.icon + "80"}
                 style={[
                   styles.input,
@@ -183,29 +223,38 @@ export default function SignupScreen() {
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
+                autoComplete="email"
               />
             </View>
 
             {/* Password */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Password
-              </Text>
-              <TextInput
-                placeholder="Create a password (min. 6 characters)"
-                placeholderTextColor={theme.icon + "80"}
-                secureTextEntry
-                style={[
-                  styles.input,
-                  {
-                    color: theme.text,
-                    backgroundColor: theme.card,
-                    borderColor: theme.icon + "40",
-                  },
-                ]}
-                value={password}
-                onChangeText={setPassword}
-              />
+              <Text style={[styles.label, { color: theme.text }]}>Password</Text>
+              <View style={styles.passwordInputContainer}>
+                <TextInput
+                  placeholder="••••••••"
+                  placeholderTextColor={theme.icon + "80"}
+                  secureTextEntry={!showPassword}
+                  style={[
+                    styles.passwordInput,
+                    {
+                      color: theme.text,
+                      backgroundColor: theme.card,
+                      borderColor: theme.icon + "40",
+                    },
+                  ]}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={togglePasswordVisibility}
+                >
+                  <Text style={{ color: theme.icon }}>
+                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               {password.length > 0 && password.length < 6 && (
                 <Text style={[styles.errorText, { color: "#FF3B30" }]}>
                   Password must be at least 6 characters
@@ -215,24 +264,32 @@ export default function SignupScreen() {
 
             {/* Confirm Password */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Confirm Password
-              </Text>
-              <TextInput
-                placeholder="Confirm your password"
-                placeholderTextColor={theme.icon + "80"}
-                secureTextEntry
-                style={[
-                  styles.input,
-                  {
-                    color: theme.text,
-                    backgroundColor: theme.card,
-                    borderColor: theme.icon + "40",
-                  },
-                ]}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
+              <Text style={[styles.label, { color: theme.text }]}>Confirm Password</Text>
+              <View style={styles.passwordInputContainer}>
+                <TextInput
+                  placeholder="••••••••"
+                  placeholderTextColor={theme.icon + "80"}
+                  secureTextEntry={!showConfirmPassword}
+                  style={[
+                    styles.passwordInput,
+                    {
+                      color: theme.text,
+                      backgroundColor: theme.card,
+                      borderColor: theme.icon + "40",
+                    },
+                  ]}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={toggleConfirmPasswordVisibility}
+                >
+                  <Text style={{ color: theme.icon }}>
+                    {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               {confirmPassword.length > 0 && password !== confirmPassword && (
                 <Text style={[styles.errorText, { color: "#FF3B30" }]}>
                   Passwords do not match
@@ -246,63 +303,40 @@ export default function SignupScreen() {
               activeOpacity={0.7}
               onPress={() => setAcceptTerms(!acceptTerms)}
             >
-              <View style={[styles.checkbox, { borderColor: theme.icon }]}>
+              <View style={[styles.checkbox, { borderColor: acceptTerms ? theme.tint : theme.icon }]}>
                 {acceptTerms && (
-                  <View
-                    style={[
-                      styles.checkboxInner,
-                      { backgroundColor: theme.tint },
-                    ]}
-                  />
+                  <View style={[styles.checkboxInner, { backgroundColor: theme.tint }]} />
                 )}
               </View>
               <Text style={[styles.termsText, { color: theme.icon }]}>
                 I agree to the{" "}
-                <Text style={[styles.termsLink, { color: theme.tint }]}>
-                  Terms of Service
-                </Text>{" "}
+                <Text style={[styles.termsLink, { color: theme.tint }]}>Terms of Service</Text>{" "}
                 and{" "}
-                <Text style={[styles.termsLink, { color: theme.tint }]}>
-                  Privacy Policy
-                </Text>
+                <Text style={[styles.termsLink, { color: theme.tint }]}>Privacy Policy</Text>
               </Text>
             </TouchableOpacity>
 
             {/* Sign Up Button */}
             <TouchableOpacity
               activeOpacity={0.85}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: acceptTerms ? theme.tint : theme.icon + "40",
-                },
-              ]}
+              style={[styles.button, { 
+                backgroundColor: acceptTerms ? theme.tint : theme.icon + "40",
+              }]}
               onPress={handleSignup}
               disabled={!acceptTerms}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  {
-                    color: acceptTerms ? "#fff" : theme.icon + "80",
-                  },
-                ]}
-              >
+              <Text style={[styles.buttonText, { 
+                color: acceptTerms ? "#fff" : theme.icon + "80" 
+              }]}>
                 Create Account
               </Text>
             </TouchableOpacity>
 
             {/* Divider */}
             <View style={styles.dividerContainer}>
-              <View
-                style={[styles.divider, { backgroundColor: theme.icon + "40" }]}
-              />
-              <Text style={[styles.dividerText, { color: theme.icon }]}>
-                or sign up with
-              </Text>
-              <View
-                style={[styles.divider, { backgroundColor: theme.icon + "40" }]}
-              />
+              <View style={[styles.divider, { backgroundColor: theme.icon + "40" }]} />
+              <Text style={[styles.dividerText, { color: theme.icon }]}>or sign up with</Text>
+              <View style={[styles.divider, { backgroundColor: theme.icon + "40" }]} />
             </View>
 
             {/* Google Sign Up */}
@@ -325,7 +359,9 @@ export default function SignupScreen() {
           <View style={styles.footerContainer}>
             <Text style={[styles.footerText, { color: theme.icon }]}>
               Already have an account?{" "}
-              <Text style={[styles.link, { color: theme.tint }]}>Login</Text>
+              <TouchableOpacity onPress={handleLoginPress}>
+                <Text style={[styles.link, { color: theme.tint }]}>Login</Text>
+              </TouchableOpacity>
             </Text>
           </View>
         </View>
@@ -433,14 +469,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: FontSize.body,
   },
+  passwordInputContainer: {
+    position: "relative",
+  },
+  passwordInput: {
+    height: 56,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingRight: 50,
+    fontSize: FontSize.body,
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 16,
+    top: 0,
+    height: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
   errorText: {
     fontSize: FontSize.caption,
     marginTop: 4,
     marginLeft: 4,
+    fontWeight: FontWeight.medium,
   },
   termsContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: 8,
     marginBottom: 24,
   },
@@ -450,6 +507,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 2,
     marginRight: 12,
+    marginTop: 2,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -461,7 +519,7 @@ const styles = StyleSheet.create({
   termsText: {
     fontSize: FontSize.caption,
     flex: 1,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   termsLink: {
     fontWeight: FontWeight.semiBold,
