@@ -93,7 +93,10 @@ export default function LoginScreen() {
               <View
                 style={[
                   styles.dropdown,
-                  { backgroundColor: theme.card, borderColor: theme.icon },
+                  {
+                    backgroundColor: theme.background,
+                    borderColor: theme.icon + "40",
+                  },
                 ]}
               >
                 {LANGUAGES.map((language) => (
@@ -101,7 +104,7 @@ export default function LoginScreen() {
                     key={language.value}
                     style={[
                       styles.dropdownItem,
-                      { borderBottomColor: theme.icon },
+                      { borderBottomColor: theme.icon + "30" },
                     ]}
                     onPress={() => {
                       setSelectedLanguage(language.value);
@@ -148,7 +151,7 @@ export default function LoginScreen() {
                   styles.input,
                   {
                     color: theme.text,
-                    backgroundColor: theme.card,
+
                     borderColor: theme.icon + "40",
                   },
                 ]}
@@ -179,7 +182,7 @@ export default function LoginScreen() {
                   styles.input,
                   {
                     color: theme.text,
-                    backgroundColor: theme.card,
+
                     borderColor: theme.icon + "40",
                   },
                 ]}

@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 import { Colors } from "@/constants/theme";
 import { FontSize, FontWeight, LineHeight } from "@/constants/typography";
@@ -29,7 +29,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
-  
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,23 +84,19 @@ export default function SignupScreen() {
 
     // Handle signup logic here
     console.log("Signing up with:", { name, email, password });
-    
+
     // Show success message
-    Alert.alert(
-      "Success!",
-      "Your account has been created successfully.",
-      [
-        {
-          text: "Continue",
-          onPress: () => {
-            // Navigate to home or verification screen
-            // router.replace("/(tabs)/home");
-            // For now, go back to login
-            router.push("/login");
-          }
-        }
-      ]
-    );
+    Alert.alert("Success!", "Your account has been created successfully.", [
+      {
+        text: "Continue",
+        onPress: () => {
+          // Navigate to home or verification screen
+          // router.replace("/(tabs)/home");
+          // For now, go back to login
+          router.push("/login");
+        },
+      },
+    ]);
   };
 
   const handleGoogleSignup = () => {
@@ -138,17 +134,31 @@ export default function SignupScreen() {
               onPress={() => setShowLanguageDropdown(!showLanguageDropdown)}
             >
               <Text style={[styles.languageText, { color: theme.text }]}>
-                {LANGUAGES.find(lang => lang.value === selectedLanguage)?.label || "English"}
+                {LANGUAGES.find((lang) => lang.value === selectedLanguage)
+                  ?.label || "English"}
               </Text>
-              <Text style={[styles.dropdownArrow, { color: theme.icon }]}>▼</Text>
+              <Text style={[styles.dropdownArrow, { color: theme.icon }]}>
+                ▼
+              </Text>
             </TouchableOpacity>
-            
+
             {showLanguageDropdown && (
-              <View style={[styles.dropdown, { backgroundColor: theme.card, borderColor: theme.icon }]}>
+              <View
+                style={[
+                  styles.dropdown,
+                  {
+                    backgroundColor: theme.background,
+                    borderColor: theme.icon + "40",
+                  },
+                ]}
+              >
                 {LANGUAGES.map((language) => (
                   <TouchableOpacity
                     key={language.value}
-                    style={[styles.dropdownItem, { borderBottomColor: theme.icon }]}
+                    style={[
+                      styles.dropdownItem,
+                      { borderBottomColor: theme.icon + "30" },
+                    ]}
                     onPress={() => {
                       setSelectedLanguage(language.value);
                       setShowLanguageDropdown(false);
@@ -186,7 +196,9 @@ export default function SignupScreen() {
           <View style={styles.formContainer}>
             {/* Full Name */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Full Name
+              </Text>
               <TextInput
                 placeholder="John Doe"
                 placeholderTextColor={theme.icon + "80"}
@@ -194,7 +206,7 @@ export default function SignupScreen() {
                   styles.input,
                   {
                     color: theme.text,
-                    backgroundColor: theme.card,
+
                     borderColor: theme.icon + "40",
                   },
                 ]}
@@ -207,7 +219,9 @@ export default function SignupScreen() {
 
             {/* Email */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Email Address</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Email Address
+              </Text>
               <TextInput
                 placeholder="john@example.com"
                 placeholderTextColor={theme.icon + "80"}
@@ -215,7 +229,7 @@ export default function SignupScreen() {
                   styles.input,
                   {
                     color: theme.text,
-                    backgroundColor: theme.card,
+
                     borderColor: theme.icon + "40",
                   },
                 ]}
@@ -229,7 +243,9 @@ export default function SignupScreen() {
 
             {/* Password */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Password</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Password
+              </Text>
               <View style={styles.passwordInputContainer}>
                 <TextInput
                   placeholder="••••••••"
@@ -239,7 +255,7 @@ export default function SignupScreen() {
                     styles.passwordInput,
                     {
                       color: theme.text,
-                      backgroundColor: theme.card,
+
                       borderColor: theme.icon + "40",
                     },
                   ]}
@@ -264,7 +280,9 @@ export default function SignupScreen() {
 
             {/* Confirm Password */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Confirm Password</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Confirm Password
+              </Text>
               <View style={styles.passwordInputContainer}>
                 <TextInput
                   placeholder="••••••••"
@@ -274,7 +292,7 @@ export default function SignupScreen() {
                     styles.passwordInput,
                     {
                       color: theme.text,
-                      backgroundColor: theme.card,
+
                       borderColor: theme.icon + "40",
                     },
                   ]}
@@ -303,40 +321,63 @@ export default function SignupScreen() {
               activeOpacity={0.7}
               onPress={() => setAcceptTerms(!acceptTerms)}
             >
-              <View style={[styles.checkbox, { borderColor: acceptTerms ? theme.tint : theme.icon }]}>
+              <View
+                style={[
+                  styles.checkbox,
+                  { borderColor: acceptTerms ? theme.tint : theme.icon },
+                ]}
+              >
                 {acceptTerms && (
-                  <View style={[styles.checkboxInner, { backgroundColor: theme.tint }]} />
+                  <View
+                    style={[
+                      styles.checkboxInner,
+                      { backgroundColor: theme.tint },
+                    ]}
+                  />
                 )}
               </View>
               <Text style={[styles.termsText, { color: theme.icon }]}>
                 I agree to the{" "}
-                <Text style={[styles.termsLink, { color: theme.tint }]}>Terms of Service</Text>{" "}
+                <Text style={[styles.termsLink, { color: theme.tint }]}>
+                  Terms of Service
+                </Text>{" "}
                 and{" "}
-                <Text style={[styles.termsLink, { color: theme.tint }]}>Privacy Policy</Text>
+                <Text style={[styles.termsLink, { color: theme.tint }]}>
+                  Privacy Policy
+                </Text>
               </Text>
             </TouchableOpacity>
 
             {/* Sign Up Button */}
             <TouchableOpacity
               activeOpacity={0.85}
-              style={[styles.button, { 
-                backgroundColor: acceptTerms ? theme.tint : theme.icon + "40",
-              }]}
+              style={[styles.button, { backgroundColor: theme.tint }]}
               onPress={handleSignup}
               disabled={!acceptTerms}
             >
-              <Text style={[styles.buttonText, { 
-                color: acceptTerms ? "#fff" : theme.icon + "80" 
-              }]}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  // {
+                  //   color: acceptTerms ? "" : theme.icon + "80",
+                  // },
+                ]}
+              >
                 Create Account
               </Text>
             </TouchableOpacity>
 
             {/* Divider */}
             <View style={styles.dividerContainer}>
-              <View style={[styles.divider, { backgroundColor: theme.icon + "40" }]} />
-              <Text style={[styles.dividerText, { color: theme.icon }]}>or sign up with</Text>
-              <View style={[styles.divider, { backgroundColor: theme.icon + "40" }]} />
+              <View
+                style={[styles.divider, { backgroundColor: theme.icon + "40" }]}
+              />
+              <Text style={[styles.dividerText, { color: theme.icon }]}>
+                or sign up with
+              </Text>
+              <View
+                style={[styles.divider, { backgroundColor: theme.icon + "40" }]}
+              />
             </View>
 
             {/* Google Sign Up */}
@@ -534,10 +575,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    color: "transparent  ",
   },
   buttonText: {
     fontSize: FontSize.button,
-    fontWeight: FontWeight.semiBold,
+    fontWeight: FontWeight.bold,
     lineHeight: LineHeight.button,
   },
   dividerContainer: {
@@ -572,7 +614,6 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.medium,
   },
   footerContainer: {
-    alignItems: "center",
     marginTop: 20,
   },
   footerText: {
